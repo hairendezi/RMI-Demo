@@ -14,24 +14,25 @@ class RMINode:
             if i < len(networkStruct) - 2:
                 self.net.append(nn.ReLU())
 
-        # def init_weights(m):
-        #     if type(m) == nn.Linear:
-        #         nn.init.normal_(m.weight, std=0.01)
-        #
-        # self.net.apply(init_weights)
-        print("** Print Model **")
-        print(self.net)
+        def init_weights(m):
+            if type(m) == nn.Linear:
+                nn.init.xavier_uniform_(m.weight)
+                # nn.init.xavier_uniform_(m.bias, 0)
+
+        self.net.apply(init_weights)
+        # print("** Print Model **")
+        # print(self.net)
 
         self.trainConfig = trainConfig
         self.preHandleData(trainData)
 
     def preHandleData(self, trainData):
         self.keys, self.values = trainData
-        mu = np.mean(self.keys)
-        sig = np.std(self.keys)
+        self.mu = np.mean(self.keys)
+        self.sig = np.std(self.keys)
         # print((self.keys - mu) / sig)
-        if sig == 0: sig = 1
-        self.keys = (self.keys - mu) / sig
+        if self.sig == 0: self.sig = 1
+        self.keys = (self.keys - self.mu) / self.sig
         self.keys = tensor(self.keys, dtype=torch.float32).reshape(-1, 1)
 
         # Calculate the output factor of the net
@@ -54,7 +55,7 @@ class RMINode:
         # optimizer = optim.SGD(self.net.parameters(), lr=lr)
         dataIter = data.DataLoader(self.trainData, batch_size, shuffle=True)
 
-        print("** Start training **")
+        # print("** Start training **")
         for epoch in range(num_epochs):
             # print(111)
             for i, (key, value) in enumerate(dataIter):
@@ -69,9 +70,13 @@ class RMINode:
                 optimizer.step()
 
                 # 输出统计信息
-                if i == len(dataIter) - 1:
-                    print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch + 1, num_epochs, l.item()))
-                    self.test()
+                if i == len(dataIter) - 1 and epoch == num_epochs - 1:
+                    print('Epoch [{}/{}], Loss: {:.8f}'.format(epoch + 1, num_epochs, l.item()))
+                    # self.test()
+
+        with torch.no_grad():
+            output = self.net(self.keys)
+        return output.numpy()
 
     def test(self):
         plt.figure(figsize=(12, 4))
