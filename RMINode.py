@@ -27,8 +27,8 @@ class RMINode:
         self.preHandleData(trainData)
 
     def preHandleData(self, trainData):
-        self.trainData = trainData
-        self.keys, self.values = self.trainData
+        self.loadData = trainData
+        self.keys, self.values = self.loadData
         self.mu = np.mean(self.keys)
         self.sig = np.std(self.keys)
         # print((self.keys - mu) / sig)
@@ -73,7 +73,7 @@ class RMINode:
                 # 输出统计信息
                 if i == len(dataIter) - 1 and epoch == num_epochs - 1:
                     print('Epoch [{}/{}], Loss: {:.8f}'.format(epoch + 1, num_epochs, l.item()))
-                    self.test()
+                    # self.test()
 
         with torch.no_grad():
             output = self.net(self.keys)

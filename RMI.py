@@ -55,33 +55,40 @@ class RMI:
 
 
     def test(self):
-        nowModel = self.modelList[0][0]
         keys, values = self.trainData
         # print(keys)
+        ansList = []
         with torch.no_grad():
             for key in keys:
+                # print("================================")
                 baseIndex = 0
-                k = torch.tensor([(key - nowModel.mu) / nowModel.sig])
+                nowModel = self.modelList[0][0]
                 for i, stageConfig in enumerate(self.stageConfigs):
+                    k = torch.tensor([(key - nowModel.mu) / nowModel.sig])
+                    # print("look up key: %d, transform: " % (key), k, nowModel.mu, nowModel.sig)
                     if stageConfig["submodel_num"] == "leaf":
                         output = nowModel.net(k)
-                        print(output)
-                        # print(int(output[0]*len(nowModel.trainData[0])))
-                        # ans = nowModel.trainData[1][int(output[0]*len(nowModel.trainData[0]))]
-                        # print(ans)
+                        output = np.minimum(1 - np.finfo(np.float32).eps, np.maximum(0, output))
+                        # print(nowModel.loadData[1][int(output[0]*len(nowModel.loadData[0]))])
+                        print("stage: %d, last stage output: %.4f" % (i, output[0]))
+                        ansList.append(nowModel.loadData[1][int(output[0]*len(nowModel.loadData[0]))])
                     else:
                         # 当前模型计算得到结构
                         output = nowModel.net(k)
                         # 选择下一层的模型
                         output = np.minimum(1 - np.finfo(np.float32).eps, np.maximum(0, output)) * stageConfig["submodel_num"]
                         nowModel = self.modelList[i+1][baseIndex + int(output[0])]
-                        baseIndex = int(output[0]) * self.stageConfigs[i]["submodel_num"]
+                        # print("stage: %d, baseIndex: %d, next model: %d, output: %.4f" % (i, baseIndex, baseIndex + int(output[0]), output[0]))
+                        baseIndex = (baseIndex + int(output[0])) * self.stageConfigs[i]["submodel_num"]
+        print(ansList)
 
 
         fig, ax = plt.subplots(nrows=len(self.stageConfigs), ncols=1, figsize=(5, 10))
         for i, stageData in enumerate(self.stageDataList):
             for data in stageData:
                 ax[i].scatter(data[0], data[1], s=3)
+        ax[2].plot(keys, ansList)
+
         plt.show()
 
 if __name__ == '__main__':
