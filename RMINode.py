@@ -56,6 +56,8 @@ class RMINode:
         # optimizer = optim.SGD(self.net.parameters(), lr=lr)
         dataIter = data.DataLoader(self.trainData, batch_size, shuffle=True)
 
+        retLoss = None
+
         # print("** Start training **")
         for epoch in range(num_epochs):
             # print(111)
@@ -72,12 +74,13 @@ class RMINode:
 
                 # 输出统计信息
                 if i == len(dataIter) - 1 and epoch == num_epochs - 1:
-                    print('Epoch [{}/{}], Loss: {:.8f}'.format(epoch + 1, num_epochs, l.item()))
+                    # print('Epoch [{}/{}], Loss: {:.8f}'.format(epoch + 1, num_epochs, l.item()))
+                    retLoss = l.item()
                     # self.test()
 
         with torch.no_grad():
             output = self.net(self.keys)
-        return output.numpy()
+        return output.numpy(), retLoss
 
     def test(self):
         plt.figure(figsize=(12, 4))

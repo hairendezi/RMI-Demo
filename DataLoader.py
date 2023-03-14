@@ -6,8 +6,8 @@ def generateRandomData(dataSize: int):
     num_of_records = int(1e6)
     max_uint32 = np.iinfo(np.uint32).max
 
-    database = np.random.lognormal(0, 1, num_of_records)
-    # database = np.random.normal(0, 1, dataSize)
+    # database = np.random.lognormal(0, 1, num_of_records)
+    database = np.random.normal(0, 1, dataSize)
     # database = np.random.exponential(scale=0.3, size=100000)
 
     # 数据范围在[0-2^32-1]

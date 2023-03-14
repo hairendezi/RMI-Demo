@@ -26,7 +26,14 @@ class RMI:
                     print("no data, pass")
                     continue
                 rmiNode = RMINode(self.networkStruct, stageConfig, stageData)
-                output = rmiNode.train()
+
+                trainCount = 0
+                while True:
+                    trainCount += 1
+                    output, loss = rmiNode.train()
+                    print("Train Count: %d, Loss: %.8f" % (trainCount, loss))
+                    if loss < 0.001:
+                        break
 
                 outputList.append(output)
                 self.modelList[i].append(rmiNode)
@@ -57,7 +64,7 @@ class RMI:
     def test(self):
         keys, values = self.trainData
         # print(keys)
-        ansList = []
+        ansList = [[] for _ in range(len(self.stageConfigs))]
         with torch.no_grad():
             for key in keys:
                 # print("================================")
@@ -70,24 +77,26 @@ class RMI:
                         output = nowModel.net(k)
                         output = np.minimum(1 - np.finfo(np.float32).eps, np.maximum(0, output))
                         # print(nowModel.loadData[1][int(output[0]*len(nowModel.loadData[0]))])
-                        print("stage: %d, last stage output: %.4f" % (i, output[0]))
-                        ansList.append(nowModel.loadData[1][int(output[0]*len(nowModel.loadData[0]))])
+                        # print("stage: %d, last stage output: %.4f" % (i, output[0]))
+                        ansList[i].append(nowModel.loadData[1][int(output[0]*len(nowModel.loadData[0]))])
                     else:
                         # 当前模型计算得到结构
                         output = nowModel.net(k)
                         # 选择下一层的模型
-                        output = np.minimum(1 - np.finfo(np.float32).eps, np.maximum(0, output)) * stageConfig["submodel_num"]
+                        output = np.minimum(1 - np.finfo(np.float32).eps, np.maximum(0, output))
+                        ansList[i].append(nowModel.loadData[1][int(output[0] * len(nowModel.loadData[0]))])
+                        output *= stageConfig["submodel_num"]
                         nowModel = self.modelList[i+1][baseIndex + int(output[0])]
                         # print("stage: %d, baseIndex: %d, next model: %d, output: %.4f" % (i, baseIndex, baseIndex + int(output[0]), output[0]))
                         baseIndex = (baseIndex + int(output[0])) * self.stageConfigs[i]["submodel_num"]
-        print(ansList)
+        # print(ansList)
 
 
         fig, ax = plt.subplots(nrows=len(self.stageConfigs), ncols=1, figsize=(5, 10))
         for i, stageData in enumerate(self.stageDataList):
             for data in stageData:
-                ax[i].scatter(data[0], data[1], s=3)
-        ax[2].plot(keys, ansList)
+                ax[i].scatter(data[0], data[1], s=5)
+                ax[i].plot(keys, ansList[i], c="orange")
 
         plt.show()
 
