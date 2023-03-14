@@ -1,4 +1,5 @@
 import numpy
+import torch
 
 from RMINode import RMINode
 from DataLoader import *
@@ -13,8 +14,6 @@ class RMI:
 
 
     def train(self):
-        fig, ax = plt.subplots(nrows=len(self.stageConfigs), ncols=1, figsize=(10, 20))
-
         self.stageDataList = [[self.trainData]]
         self.modelList = []
         for i, stageConfig in enumerate(self.stageConfigs):
@@ -23,7 +22,6 @@ class RMI:
             for j, stageData in enumerate(self.stageDataList[i]):
                 # 训练每个模型
                 print("Start training on stage: %d model: %d" % (i, j))
-                ax[i].scatter(stageData[0], stageData[1], s=3)
                 if len(stageData[0]) == 0:
                     print("no data, pass")
                     continue
@@ -54,16 +52,40 @@ class RMI:
                     self.stageDataList[i+1].extend([(numpy.array(tempKeyList[k]), numpy.array(tempValueList[k])) for k in range(stageConfig["submodel_num"])])
                     # print(tempKeyList)
                     # print(tempValueList)
-        plt.savefig("./result.pdf")
-        plt.show()
 
 
     def test(self):
-        pass
+        nowModel = self.modelList[0][0]
+        keys, values = self.trainData
+        # print(keys)
+        with torch.no_grad():
+            for key in keys:
+                baseIndex = 0
+                k = torch.tensor([(key - nowModel.mu) / nowModel.sig])
+                for i, stageConfig in enumerate(self.stageConfigs):
+                    if stageConfig["submodel_num"] == "leaf":
+                        output = nowModel.net(k)
+                        print(output)
+                        # print(int(output[0]*len(nowModel.trainData[0])))
+                        # ans = nowModel.trainData[1][int(output[0]*len(nowModel.trainData[0]))]
+                        # print(ans)
+                    else:
+                        # 当前模型计算得到结构
+                        output = nowModel.net(k)
+                        # 选择下一层的模型
+                        output = np.minimum(1 - np.finfo(np.float32).eps, np.maximum(0, output)) * stageConfig["submodel_num"]
+                        nowModel = self.modelList[i+1][baseIndex + int(output[0])]
+                        baseIndex = int(output[0]) * self.stageConfigs[i]["submodel_num"]
 
+
+        fig, ax = plt.subplots(nrows=len(self.stageConfigs), ncols=1, figsize=(5, 10))
+        for i, stageData in enumerate(self.stageDataList):
+            for data in stageData:
+                ax[i].scatter(data[0], data[1], s=3)
+        plt.show()
 
 if __name__ == '__main__':
-    networkStruct = [1, 8, 8, 1]
+    networkStruct = [1, 8, 1]
     stageConfigs = [
         {
             "submodel_num": 4,
@@ -87,3 +109,4 @@ if __name__ == '__main__':
     trainData = generateRandomData(1500)
     rmi = RMI(networkStruct, stageConfigs, trainData)
     rmi.train()
+    rmi.test()
