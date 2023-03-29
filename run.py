@@ -1,4 +1,3 @@
-from RMI import RMI
 import numpy as np
 
 
