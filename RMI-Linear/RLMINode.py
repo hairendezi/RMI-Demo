@@ -44,9 +44,16 @@ class RLMINode:
         print(self._a, self._b)
 
     # output key's predict value
-    def predict(self, _key):
+    def predict(self, _key: float):
         predictKey = (_key - self.mu) / self.sig
         return self._a * predictKey + self._b
+
+    def predictKeys(self, _keys: []):
+        retList = []
+        for key in _keys:
+            predictKey = (key - self.mu) / self.sig
+            retList.append(self._a * predictKey + self._b)
+        return retList
 
     # Visual the train data and the predict line model
     def visualModel(self):

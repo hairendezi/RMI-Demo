@@ -1,0 +1,80 @@
+import DataLoader
+from RLMINode import RLMINode
+import numpy as np
+import matplotlib.pyplot as plt
+from DataLoader import *
+
+
+# Recursive Linear Model Index
+class RLMI:
+    def __init__(self, trainData, stageConfigList: []):
+        self.trainData = trainData
+        self.stageConfigList = stageConfigList
+
+    def build(self):
+        self.stageDataList = [[self.trainData]]
+        self.stageModelList = []
+        self.stageOutputList = []
+        for i, stageConfig in enumerate(self.stageConfigList):
+            stageData = self.stageDataList[i]
+            stageModel = []
+            stageOutput = []
+            subStageData = []
+            for j, modelData in enumerate(stageData):
+                # ===== Train Model =====
+                rlmiNode = RLMINode(modelData)
+                rlmiNode.build()
+                stageModel.append(rlmiNode)
+                output = rlmiNode.predictKeys(rlmiNode._keys)
+                stageOutput.append(output)
+
+                # ===== Divide the Sub-Data =====
+                if stageConfig["submodel_num"] != "leaf":
+                    output = np.minimum(1 - np.finfo(np.float32).eps, np.maximum(0, stageOutput[j])) * stageConfig["submodel_num"]
+                    tempKeyList = [[] for _ in range(stageConfig["submodel_num"])]
+                    tempValueList = [[] for _ in range(stageConfig["submodel_num"])]
+                    for sdID, idx in enumerate(list(output)):
+                        # print(int(idx), sdID, len(self.stageDataList[i][j][0]))
+                        tempKeyList[int(idx)].append(stageData[j][0][sdID])
+                        tempValueList[int(idx)].append(stageData[j][1][sdID])
+                    subStageData.extend([(np.array(tempKeyList[k]), np.array(tempValueList[k])) for k in range(stageConfig["submodel_num"])])
+                    # print(tempKeyList)
+                    # print(tempValueList)
+            self.stageDataList.append(subStageData)
+            self.stageModelList.append(stageModel)
+            self.stageOutputList.append(stageOutput)
+
+    def visualStageOutput(self):
+        keys, values = self.trainData
+        ansList = [[] for _ in range(len(self.stageConfigList))]
+        for key in keys:
+            nowModel = self.stageModelList[0][0]
+            baseIndex = 0
+            for i, stageConfig in enumerate(self.stageConfigList):
+                output = nowModel.predict(key)
+                # Normalize output in [0, 1]
+                output = np.minimum(1 - np.finfo(np.float32).eps, np.maximum(0, output))
+                ansList[i].append(nowModel._values[int(output * nowModel.dataSize)])
+                # ===== Calculate Next Model Index =====
+                if stageConfig["submodel_num"] != "leaf":
+                    output *= stageConfig["submodel_num"]
+                    nowModel = self.stageModelList[i + 1][baseIndex + int(output)]
+                    baseIndex = (baseIndex + int(output)) * self.stageConfigList[i]["submodel_num"]
+
+
+        fig, ax = plt.subplots(nrows=len(self.stageConfigList), ncols=1, figsize=(5, 10))
+        for i, stageData in enumerate(self.stageDataList):
+            for data in stageData:
+                ax[i].scatter(data[0], data[1], s=5)
+                ax[i].plot(keys, ansList[i], c="orange")
+        plt.savefig("./rlmi.pdf")
+        plt.show()
+
+
+
+if __name__ == '__main__':
+    stageConfigList = [{"submodel_num": 4}, {"submodel_num": 4}, {"submodel_num": "leaf"}]
+    trainData = generateRandomData(1500)
+    rlmi = RLMI(trainData, stageConfigList)
+    rlmi.build()
+    rlmi.visualStageOutput()
