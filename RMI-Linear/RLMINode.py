@@ -13,19 +13,23 @@ class RLMINode:
         self.trainData = trainData
         self._keys, self._values = self.trainData
         self.dataSize = len(self._keys)
+        self.noneData = False
 
-        # ===== Normalize Keys in N(0, 1) =====
-        self.mu = np.mean(self._keys)
-        self.sig = np.std(self._keys)
-        if self.sig == 0: self.sig = 1
-        self.keys = (self._keys - self.mu) / self.sig
+        if self.dataSize != 0:
+            # ===== Normalize Keys in N(0, 1) =====
+            self.mu = np.mean(self._keys)
+            self.sig = np.std(self._keys)
+            if self.sig == 0: self.sig = 1
+            self.keys = (self._keys - self.mu) / self.sig
 
-        # ===== Normalize Values in [0, 1] =====
-        min_out = np.min(self._values)
-        max_out = np.max(self._values)
-        output_factor = (max_out - min_out)
-        if output_factor == 0: output_factor = 1
-        self.values = (self._values - min_out) / output_factor
+            # ===== Normalize Values in [0, 1] =====
+            min_out = np.min(self._values)
+            max_out = np.max(self._values)
+            output_factor = (max_out - min_out)
+            if output_factor == 0: output_factor = 1
+            self.values = (self._values - min_out) / output_factor
+        else:
+            self.noneData = True
 
     # Calculate the linear Regression model
     def build(self):
@@ -41,7 +45,7 @@ class RLMINode:
         self._a = (sigmaKV - self.dataSize * keysAver * valuesAver) / (sigmaKK - self.dataSize * keysAver * keysAver)
         self._b = valuesAver - self._a * keysAver
 
-        print(self._a, self._b)
+        # print(self._a, self._b)
 
     # output key's predict value
     def predict(self, _key: float):
@@ -63,10 +67,19 @@ class RLMINode:
         value_hats = []
         for i in range(self.dataSize):
             value_hats.append(self.predict(self._keys[i]))
+        value_hats = np.minimum(1 - np.finfo(np.float32).eps, np.maximum(0, value_hats))
         plt.scatter(keys, values, s=5)
         plt.plot(keys, value_hats, c="r")
 
         plt.show()
+
+    def evaluateModel(self):
+        for key, value in zip(self.keys, self.values):
+            value_hat = self._a * key + self._b
+            value_hat = np.minimum(1 - np.finfo(np.float32).eps, np.maximum(0, value_hat))
+            error = abs(value_hat-value)
+            print(error)
+
 
 
 
@@ -75,3 +88,4 @@ if __name__ == '__main__':
     rlmi = RLMINode(data)
     rlmi.build()
     rlmi.visualModel()
+    rlmi.evaluateModel()

@@ -21,12 +21,19 @@ class RLMI:
             stageOutput = []
             subStageData = []
             for j, modelData in enumerate(stageData):
+                # if stageConfig["submodel_num"] != "leaf" and modelData is None or len(modelData[0]) == 0:
+                #     subStageData.extend([None for _ in range(stageConfig["submodel_num"])])
+                #     stageOutput.extend([None for _ in range(stageConfig["submodel_num"])])
+                #     stageModel.append(None)
+                #     continue
                 # ===== Train Model =====
                 rlmiNode = RLMINode(modelData)
-                rlmiNode.build()
+                if not rlmiNode.noneData:
+                    rlmiNode.build()
                 stageModel.append(rlmiNode)
                 output = rlmiNode.predictKeys(rlmiNode._keys)
                 stageOutput.append(output)
+                # rlmiNode.visualModel()
 
                 # ===== Divide the Sub-Data =====
                 if stageConfig["submodel_num"] != "leaf":
