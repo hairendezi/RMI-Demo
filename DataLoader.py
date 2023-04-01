@@ -6,8 +6,8 @@ def generateRandomData(dataSize: int):
     num_of_records = int(1e6)
     max_uint32 = np.iinfo(np.uint32).max
 
-    database = np.random.lognormal(0, 1, num_of_records)
-    # database = np.random.normal(0, 1, dataSize)
+    # database = np.random.lognormal(0, 1, num_of_records)
+    database = np.random.normal(0, 1, dataSize)
     # database = np.random.exponential(scale=0.3, size=100000)
 
     # 数据范围在[0-2^32-1]
@@ -30,8 +30,7 @@ def generateRandomData(dataSize: int):
     return dataset[sampledIndices, 0], dataset[sampledIndices, 1]
 
 
-def generateRangeQueryData(posNum):
-    range = [0, 65535]
+def generateRangeQueryData(posNum, range):
     randomPosList = np.unique(np.sort(np.random.randint(range[0], range[1], posNum)))
     rangeDataSet = []
     prePos = range[0]

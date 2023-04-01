@@ -1,6 +1,7 @@
 from DataLoader import *
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 
 # The node of Recursive Linear Model Index
@@ -74,11 +75,16 @@ class RLMINode:
         plt.show()
 
     def evaluateModel(self):
+        errorList = []
         for key, value in zip(self.keys, self.values):
             value_hat = self._a * key + self._b
             value_hat = np.minimum(1 - np.finfo(np.float32).eps, np.maximum(0, value_hat))
-            error = abs(value_hat-value)
-            print(error)
+            errorList.append(abs(value_hat-value))
+        maxError = max(errorList)
+        # print(maxError)
+        # print(math.ceil(maxError * self.dataSize))
+        self.maxOffset = math.ceil(maxError * self.dataSize)
+
 
 
 

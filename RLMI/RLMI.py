@@ -45,6 +45,8 @@ class RLMI:
                         tempKeyList[int(idx)].append(stageData[j][0][sdID])
                         tempValueList[int(idx)].append(stageData[j][1][sdID])
                     subStageData.extend([(np.array(tempKeyList[k]), np.array(tempValueList[k])) for k in range(stageConfig["submodel_num"])])
+                else:
+                    rlmiNode.evaluateModel()
                     # print(tempKeyList)
                     # print(tempValueList)
             self.stageDataList.append(subStageData)
@@ -54,7 +56,9 @@ class RLMI:
     def visualStageOutput(self):
         keys, values = self.trainData
         ansList = [[] for _ in range(len(self.stageConfigList))]
+        noneMatchDataCount = 0
         for key in keys:
+            lookTag = False
             nowModel = self.stageModelList[0][0]
             baseIndex = 0
             for i, stageConfig in enumerate(self.stageConfigList):
@@ -67,7 +71,19 @@ class RLMI:
                     output *= stageConfig["submodel_num"]
                     nowModel = self.stageModelList[i + 1][baseIndex + int(output)]
                     baseIndex = (baseIndex + int(output)) * self.stageConfigList[i]["submodel_num"]
+                # ===== Linear Search in Leaf Node =====
+                else:
+                    searchBasePos = int(output * nowModel.dataSize)
+                    start = max(0, searchBasePos-nowModel.maxOffset-15)
+                    end = min(nowModel.dataSize, searchBasePos+nowModel.maxOffset+15)
+                    for idx in range(start, end):
+                        # print(idx)
+                        if nowModel._keys[idx] == key:
+                            lookTag = True
+                    if lookTag is False:
+                        noneMatchDataCount += 1
 
+        print("None Match Keys:", noneMatchDataCount)
 
         fig, ax = plt.subplots(nrows=len(self.stageConfigList), ncols=1, figsize=(5, 10))
         for i, stageData in enumerate(self.stageDataList):
@@ -80,7 +96,12 @@ class RLMI:
 
 
 if __name__ == '__main__':
-    stageConfigList = [{"submodel_num": 4}, {"submodel_num": 4}, {"submodel_num": "leaf"}]
+    stageConfigList = [
+        {"submodel_num": 4},
+        {"submodel_num": 4},
+        # {"submodel_num": 4},
+        {"submodel_num": "leaf"}
+    ]
     trainData = generateRandomData(1500)
     rlmi = RLMI(trainData, stageConfigList)
     rlmi.build()
