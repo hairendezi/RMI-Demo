@@ -99,7 +99,7 @@ if __name__ == '__main__':
     stageConfigList = [
         {"submodel_num": 4},
         {"submodel_num": 4},
-        # {"submodel_num": 4},
+        {"submodel_num": 4},
         {"submodel_num": "leaf"}
     ]
     trainData = generateRandomData(1500)

@@ -46,6 +46,10 @@ class RLMINode:
         self._a = (sigmaKV - self.dataSize * keysAver * valuesAver) / (sigmaKK - self.dataSize * keysAver * keysAver)
         self._b = valuesAver - self._a * keysAver
 
+        if math.isnan(self._a) or math.isnan(self._b):
+            self._a = 0
+            self._b = 0
+
         # print(self._a, self._b)
 
     # output key's predict value
@@ -75,6 +79,7 @@ class RLMINode:
         plt.show()
 
     def evaluateModel(self):
+        if self.dataSize == 0: return
         errorList = []
         for i in range(self.dataSize):
             key = self.keys[i]
@@ -84,7 +89,8 @@ class RLMINode:
             # errorList.append(abs(value_hat-value))
             errorList.append(abs(i-predictPos))
         maxError = max(errorList)
-        print(maxError)
+        # print(maxError, self._a, self._b)
+        # if math.isnan(maxError): maxError = self.dataSize
         # print(math.ceil(maxError * self.dataSize))
         self.maxOffset = math.ceil(maxError)
         # self.maxOffset = math.ceil(maxError * self.dataSize)
