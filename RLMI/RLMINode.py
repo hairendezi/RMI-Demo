@@ -76,14 +76,18 @@ class RLMINode:
 
     def evaluateModel(self):
         errorList = []
-        for key, value in zip(self.keys, self.values):
+        for i in range(self.dataSize):
+            key = self.keys[i]
             value_hat = self._a * key + self._b
             value_hat = np.minimum(1 - np.finfo(np.float32).eps, np.maximum(0, value_hat))
-            errorList.append(abs(value_hat-value))
+            predictPos = value_hat * self.dataSize
+            # errorList.append(abs(value_hat-value))
+            errorList.append(abs(i-predictPos))
         maxError = max(errorList)
-        # print(maxError)
+        print(maxError)
         # print(math.ceil(maxError * self.dataSize))
-        self.maxOffset = math.ceil(maxError * self.dataSize)
+        self.maxOffset = math.ceil(maxError)
+        # self.maxOffset = math.ceil(maxError * self.dataSize)
 
 
 

@@ -74,8 +74,8 @@ class RLMI:
                 # ===== Linear Search in Leaf Node =====
                 else:
                     searchBasePos = int(output * nowModel.dataSize)
-                    start = max(0, searchBasePos-nowModel.maxOffset-15)
-                    end = min(nowModel.dataSize, searchBasePos+nowModel.maxOffset+15)
+                    start = max(0, searchBasePos-nowModel.maxOffset-1)
+                    end = min(nowModel.dataSize, searchBasePos+nowModel.maxOffset+1)
                     for idx in range(start, end):
                         # print(idx)
                         if nowModel._keys[idx] == key:
