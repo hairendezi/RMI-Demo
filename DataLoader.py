@@ -1,5 +1,4 @@
 import numpy as np
-from torch.utils import data
 
 
 def generateRandomData(dataSize: int):
@@ -30,23 +29,22 @@ def generateRandomData(dataSize: int):
     return dataset[sampledIndices, 0], dataset[sampledIndices, 1]
 
 
-def generateRangeQueryData(posNum, range):
-    randomPosList = np.unique(np.sort(np.random.randint(range[0], range[1], posNum)))
+def generateRangeQueryData(posNum, dataRange):
+    randomPosList = np.unique(np.sort(np.random.randint(dataRange[0], dataRange[1], posNum)))
+    randomPosList = [pos for pos in randomPosList]
+    # randomPosList.insert(0, range[0])
+    # randomPosList.insert(-1, range[1])
     rangeDataSet = []
-    prePos = range[0]
-    for pos in randomPosList:
-        # [x, y)
-        rangeDataSet.append([prePos, pos])
-        prePos = pos
-    rangeDataSet.append([prePos, range[1]])
-    # print(rangeDataSet)
+    for i in range(len(randomPosList)-1):
+        rangeDataSet.append([randomPosList[i], randomPosList[i+1]])
+
     return [
         {
             "LOW": rangeData[0],
             "HIGH": rangeData[1] - 1,
             "ID": id
         }
-    for id, rangeData in enumerate(rangeDataSet)], [pos for pos in randomPosList]
+    for id, rangeData in enumerate(rangeDataSet)], randomPosList
 
 
 if __name__ == '__main__':
