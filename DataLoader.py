@@ -32,8 +32,8 @@ def generateRandomData(dataSize: int):
 def generateRangeQueryData(posNum, dataRange):
     randomPosList = np.unique(np.sort(np.random.randint(dataRange[0], dataRange[1], posNum)))
     randomPosList = [pos for pos in randomPosList]
-    # randomPosList.insert(0, range[0])
-    # randomPosList.insert(-1, range[1])
+    randomPosList.insert(0, dataRange[0])
+    randomPosList.insert(-1, dataRange[1]+1)
     rangeDataSet = []
     for i in range(len(randomPosList)-1):
         rangeDataSet.append([randomPosList[i], randomPosList[i+1]])

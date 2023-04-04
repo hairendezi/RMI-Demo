@@ -66,7 +66,7 @@ class RLMI:
                 searchBasePos = int(output * nowModel.dataSize)
                 start = max(0, searchBasePos - nowModel.maxOffset)
                 end = min(nowModel.dataSize, searchBasePos + nowModel.maxOffset + 1)
-                return start, end
+                return start, end, nowModel
 
     def visualStageOutput(self):
         keys, values = [data.key for data in self.trainData], [data.value for data in self.trainData]

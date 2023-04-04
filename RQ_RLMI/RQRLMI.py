@@ -14,7 +14,7 @@ class RangeQueryHandler:
         ]
         self.rlmi = RLMI(self.trainData, self.stageConfigList)
         self.rlmi.build()
-        self.rlmi.visualStageOutput()
+        # self.rlmi.visualStageOutput()
 
     def preRangeHandler(self, rangeData, posList):
         self.rangeDataList = [Range(rangeConfig) for rangeConfig in rangeData]
@@ -35,16 +35,18 @@ class RangeQueryHandler:
             self.trainData.append(tempKV)
 
     def lookup(self, pos):
-        startPos, endPos = self.rlmi.lookup(pos)
+        startPos, endPos, model = self.rlmi.lookup(pos)
+        # print(startPos, endPos)
         for i in range(startPos, endPos):
-            for j in self.trainData[i].rangeID:
-                if j.match(pos):
+            for j in model.trainData[i].rangeID:
+                # print(j)
+                if j.matchPos(pos):
                     return j.ID
 
 if __name__ == '__main__':
     rangeData, posList = generateRangeQueryData(1000, [0, 65535])
     rqHandler = RangeQueryHandler(rangeData, posList)
     for i in range(0, 65536):
-        # TODO: test the lookup result
-        pass
+        print(rqHandler.lookup(i))
+
 
