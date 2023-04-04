@@ -2,6 +2,7 @@ from DataLoader import *
 from RQ_RLMI.RLMI import RLMI
 from RQ_RLMI.Range import Range
 from RQ_RLMI.KVClass import KVClass
+import datetime
 
 class RangeQueryHandler:
     def __init__(self, rangeData, posList):
@@ -13,7 +14,10 @@ class RangeQueryHandler:
             {"submodel_num": "leaf"}
         ]
         self.rlmi = RLMI(self.trainData, self.stageConfigList)
+        startTime = datetime.datetime.now()
         self.rlmi.build()
+        endTime = datetime.datetime.now()
+        print("Build RLMI Cost Time: %.5f s" % (endTime-startTime).total_seconds())
         # self.rlmi.visualStageOutput()
 
     def preRangeHandler(self, rangeData, posList):
@@ -46,7 +50,11 @@ class RangeQueryHandler:
 if __name__ == '__main__':
     rangeData, posList = generateRangeQueryData(1000, [0, 65535])
     rqHandler = RangeQueryHandler(rangeData, posList)
+    noneMatchDataCount = 0
+    startTime = datetime.datetime.now()
     for i in range(0, 65536):
-        print(rqHandler.lookup(i))
-
-
+        if rqHandler.lookup(i) == None:
+            noneMatchDataCount += 1
+    endTime = datetime.datetime.now()
+    print("Lookup keys Cost Time: %.5f s" % (endTime - startTime).total_seconds())
+    print("None Match Data:", noneMatchDataCount)

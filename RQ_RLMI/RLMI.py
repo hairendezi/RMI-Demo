@@ -55,7 +55,8 @@ class RLMI:
         for i, stageConfig in enumerate(self.stageConfigList):
             output = nowModel.predict(key)
             # Normalize output in [0, 1]
-            output = np.minimum(1 - np.finfo(np.float32).eps, np.maximum(0, output))
+            # output = np.minimum(1 - np.finfo(np.float32).eps, np.maximum(0, output))
+            output = max(min(output, 0.999999999), 0)
             # ===== Calculate Next Model Index =====
             if stageConfig["submodel_num"] != "leaf":
                 output *= stageConfig["submodel_num"]
