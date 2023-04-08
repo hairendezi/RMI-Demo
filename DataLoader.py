@@ -33,7 +33,7 @@ def generateRangeQueryData(posNum, dataRange):
     randomPosList = np.unique(np.sort(np.random.randint(dataRange[0], dataRange[1], posNum)))
     randomPosList = [pos for pos in randomPosList]
     randomPosList.insert(0, dataRange[0])
-    randomPosList.insert(-1, dataRange[1]+1)
+    randomPosList.append(dataRange[1]+1)
     rangeDataSet = []
     for i in range(len(randomPosList)-1):
         rangeDataSet.append([randomPosList[i], randomPosList[i+1]])
@@ -49,4 +49,8 @@ def generateRangeQueryData(posNum, dataRange):
 
 if __name__ == '__main__':
     # print(generateRandomData(1500))
-    print(generateRangeQueryData(1000))
+    # print(generateRangeQueryData(1000))
+    rangeData, posList = generateRangeQueryData(1000, [0, 65535])
+    with open("./posdata.txt", "w") as f:
+        for i in posList:
+            f.write(str(i)+"\n")

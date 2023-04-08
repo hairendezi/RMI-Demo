@@ -16,11 +16,12 @@ public:
     std::vector<double> values;
     double mu;
     double sig;
-    double maxOffset;
+    int maxOffset;
 
     RLMINode(std::vector<KVEntry> trainData);
-    void build();
+    std::vector<double> build();
     void calMuSig();
+    double predict(unsigned int key);
     void evaluateErrorBound();
 };
 

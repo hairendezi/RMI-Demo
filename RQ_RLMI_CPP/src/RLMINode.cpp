@@ -49,30 +49,44 @@ void RLMINode::calMuSig() {
     this->sig = sqrt(sigma2);
 }
 
-void RLMINode::build() {
+std::vector<double> RLMINode::build() {
+    // ===== Data Size is 0 =====
     if(this->dataSize == 0) {
         this->_a = 0;
         this->_b = 0;
-        return;
-    }
-    double keysAver = 0, valueAver = 0;
-    double sigmaKV = 0, sigmaKK = 0;
-    for(int i=0; i<this->dataSize; i++) {
-        keysAver += this->keys[i];
-        valueAver += this->values[i];
-        sigmaKV += this->keys[i] * this->values[i];
-        sigmaKK += this->keys[i] * this->keys[i];
-    }
-    keysAver /= this->dataSize;
-    valueAver /= this->dataSize;
-
-    if(this->dataSize * keysAver * keysAver == sigmaKK) {
-        this->_a = 0;
-        this->_b = 0;
     } else {
-        this->_a = (sigmaKV - this->dataSize * keysAver * valueAver) / (sigmaKK - this->dataSize * keysAver * keysAver);
-        this->_b = valueAver - this->_a * keysAver;
+        double keysAver = 0, valueAver = 0;
+        double sigmaKV = 0, sigmaKK = 0;
+        for(int i=0; i<this->dataSize; i++) {
+            keysAver += this->keys[i];
+            valueAver += this->values[i];
+            sigmaKV += this->keys[i] * this->values[i];
+            sigmaKK += this->keys[i] * this->keys[i];
+        }
+        keysAver /= this->dataSize;
+        valueAver /= this->dataSize;
+        // Only one data
+        if(this->dataSize * keysAver * keysAver == sigmaKK) {
+            this->_a = 0;
+            this->_b = 0;
+        }
+        // Normal Linear Regression
+        else {
+            this->_a = (sigmaKV - this->dataSize * keysAver * valueAver) / (sigmaKK - this->dataSize * keysAver * keysAver);
+            this->_b = valueAver - this->_a * keysAver;
+        }
     }
+    std::vector<double> output;
+    for(int i=0; i<this->dataSize; i++) {
+        double value_hat = this->_a * this->keys[i] + this->_b;
+        output.push_back(std::max(std::min(value_hat, 0.9999999), 0.0));
+    }
+    return output;
+}
+
+double RLMINode::predict(unsigned int key) {
+    double _key = (1.0 * key - this->mu) / this->sig;
+    return this->_a * _key + this->_b;
 }
 
 void RLMINode::evaluateErrorBound() {
