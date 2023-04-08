@@ -11,7 +11,7 @@ void Range::printSelf() {
 }
 
 bool Range::match(unsigned int pos) {
-    if(pos <= this->Low && pos >= this->High) {
+    if(pos >= this->Low && pos <= this->High) {
         return true;
     } else {
         return false;

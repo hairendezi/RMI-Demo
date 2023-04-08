@@ -1,7 +1,7 @@
 #include "RLMINode.h"
 #include <cmath>
 
-RLMINode::RLMINode(std::vector<KVEntry> trainData) {
+RLMINode::RLMINode(std::vector<KVEntry *> trainData) {
     this->_a = 0;
     this->_b = 0;
     this->trainData = trainData;
@@ -9,8 +9,8 @@ RLMINode::RLMINode(std::vector<KVEntry> trainData) {
 
     if(this->dataSize != 0) {
         for(auto d : this->trainData) {
-            _keys.push_back(d.key);
-            _values.push_back(d.value);
+            _keys.push_back(d->key);
+            _values.push_back(d->value);
         }
 
         // ===== Normalize Keys in N(0, 1) =====
@@ -62,9 +62,12 @@ std::vector<double> RLMINode::build() {
             valueAver += this->values[i];
             sigmaKV += this->keys[i] * this->values[i];
             sigmaKK += this->keys[i] * this->keys[i];
+            // printf("ka: %f, va: %f, kv: %f, kk: %f\n", keysAver, valueAver, sigmaKV, sigmaKK);
         }
         keysAver /= this->dataSize;
         valueAver /= this->dataSize;
+//        printf("datasize: %d\n", this->dataSize);
+
         // Only one data
         if(this->dataSize * keysAver * keysAver == sigmaKK) {
             this->_a = 0;
@@ -76,6 +79,7 @@ std::vector<double> RLMINode::build() {
             this->_b = valueAver - this->_a * keysAver;
         }
     }
+//    printf("a: %f, b: %f\n", this->_a, this->_b);
     std::vector<double> output;
     for(int i=0; i<this->dataSize; i++) {
         double value_hat = this->_a * this->keys[i] + this->_b;
