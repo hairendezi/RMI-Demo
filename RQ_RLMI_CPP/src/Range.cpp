@@ -10,10 +10,10 @@ void Range::printSelf() {
     printf("Range %d: [%d, %d)", id, Low, High+1);
 }
 
-bool Range::match(unsigned int pos) {
-    if(pos >= this->Low && pos <= this->High) {
-        return true;
-    } else {
-        return false;
-    }
-}
+//bool Range::match(unsigned int pos) {
+//    if(pos >= this->Low && pos <= this->High) {
+//        return true;
+//    } else {
+//        return false;
+//    }
+//}

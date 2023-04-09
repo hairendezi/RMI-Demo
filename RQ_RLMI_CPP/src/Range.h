@@ -8,9 +8,17 @@ public:
     unsigned int Low;
     unsigned int High;
     unsigned int id;
+
+
     Range(unsigned int _Low, unsigned int _High, unsigned int _id);
     void printSelf();
-    bool match(unsigned int pos);
+    inline bool match(const unsigned int &pos) const {
+        if(pos >= this->Low && pos <= this->High) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 };
 
 

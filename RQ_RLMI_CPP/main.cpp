@@ -64,8 +64,8 @@ int main() {
         }
     }
     endTime = std::chrono::high_resolution_clock::now();
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
-    printf("Lookup Time Cost: %lld ms\n", duration);
+    duration = std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime).count();
+    printf("Lookup Time Cost: %.6f ms\n", 1.0*duration/1e6);
     printf("None match count: %d\n", noneMatchCount);
     printf("===== Start Test Pext Test =====\n");
 //    printf("Match result: %d", rlmi->rqLookup(10000));

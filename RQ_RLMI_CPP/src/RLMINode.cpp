@@ -90,10 +90,10 @@ std::vector<double> RLMINode::build() {
     return output;
 }
 
-double RLMINode::predict(unsigned int key) {
-    double _key = (1.0 * key - this->mu) / this->sig;
-    return this->_a * _key + this->_b;
-}
+//inline double RLMINode::predict(const unsigned int &key) {
+//    double _key = (1.0 * key - this->mu) / this->sig;
+//    return this->_a * _key + this->_b;
+//}
 
 void RLMINode::evaluateErrorBound() {
     if(this->dataSize == 0) return;

@@ -21,7 +21,10 @@ public:
     RLMINode(KVEntry **trainData, int _dataSize);
     std::vector<double> build();
     void calMuSig();
-    double predict(unsigned int key);
+    inline double predict(const unsigned int &key) const {
+        double _key = (1.0 * key - this->mu) / this->sig;
+        return this->_a * _key + this->_b;
+    }
     void evaluateErrorBound();
 };
 
