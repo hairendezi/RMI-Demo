@@ -9,8 +9,8 @@ class KVEntry {
 public:
     unsigned int key;
     double value;
-    std::vector<Range> rangeList;
-    KVEntry(unsigned int _key, double _value, std::vector<Range> _rangeList);
+    Range **rangeList;
+    KVEntry(unsigned int _key, double _value, Range **_rangeList);
     void printSelf();
 };
 

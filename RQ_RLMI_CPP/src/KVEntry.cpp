@@ -1,6 +1,6 @@
 #include "KVEntry.h"
 
-KVEntry::KVEntry(unsigned int _key, double _value, std::vector<Range> _rangeList) {
+KVEntry::KVEntry(unsigned int _key, double _value, Range **_rangeList) {
     this->key = _key;
     this->value = _value;
     this->rangeList = _rangeList;
@@ -8,9 +8,8 @@ KVEntry::KVEntry(unsigned int _key, double _value, std::vector<Range> _rangeList
 
 void KVEntry::printSelf() {
     printf("key: %d, value: %.10f", key, value);
-    for(Range &range : rangeList) {
-        range.printSelf();
-        printf(", ");
-    }
+    rangeList[0]->printSelf();
+    printf(", ");
+    if(rangeList[1]) rangeList[1]->printSelf();
     printf("\n");
 }

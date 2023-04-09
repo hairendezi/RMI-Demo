@@ -8,13 +8,15 @@
 class RLMI {
 public:
     std::vector<KVEntry *> trainData;
-    std::vector<int> stageConfigList;
+    int *stageConfigList;
+    int stageNum;
+    RLMINode ***stageModelList;
 
     std::vector<std::vector<std::vector<KVEntry *> > > stageDataList;
-    std::vector<std::vector<RLMINode *> > stageModelList;
+//    std::vector<std::vector<RLMINode *> > stageModelList;
     std::vector<std::vector<std::vector<double> > > stageOutputList;
 
-    RLMI(std::vector<KVEntry *> _trainData, std::vector<int> _stageConfigList);
+    RLMI(std::vector<KVEntry *> _trainData, int *_stageConfigList, int _stageNum);
     void build();
     int rqLookup(unsigned int key);
 };

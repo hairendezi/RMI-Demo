@@ -1,23 +1,30 @@
 #include "RLMI.h"
 
-RLMI::RLMI(std::vector<KVEntry *> _trainData, std::vector<int> _stageConfigList) {
+RLMI::RLMI(std::vector<KVEntry *> _trainData, int *_stageConfigList, int _stageNum) {
     this->trainData = _trainData;
     this->stageConfigList = _stageConfigList;
+    this->stageNum = _stageNum;
+    this->stageModelList = new RLMINode**[stageNum];
 }
 
 void RLMI::build() {
     stageDataList = {{this->trainData}};
-    for(int i=0; i<this->stageConfigList.size(); i++) {
+    int stageModelNum = 1;
+    for(int i=0; i<this->stageNum; i++) {
         int stageConfig = this->stageConfigList[i];
         std::vector<std::vector<KVEntry *> > stageData = stageDataList[i];
-        std::vector<RLMINode *> stageModel;
+//        std::vector<RLMINode *> stageModel;
+        RLMINode **stageModel = new RLMINode*[stageModelNum];
         std::vector<std::vector<double> > stageOutput;
         std::vector<std::vector<KVEntry *> > subStageData;
         for(int j=0; j<stageData.size(); j++) {
             std::vector<KVEntry *> modelData = stageData[j];
-            RLMINode * rlmiNode = new RLMINode(modelData);
+            KVEntry **tempModelData = new KVEntry*[modelData.size()];
+            for(int k=0; k<modelData.size(); k++) {tempModelData[k] = modelData[k];}
+
+            RLMINode * rlmiNode = new RLMINode(tempModelData, modelData.size());
             stageOutput.push_back(rlmiNode->build());
-            stageModel.push_back(rlmiNode);
+            stageModel[j] = rlmiNode;
             if(stageConfig != -1) {
                 std::vector<std::vector<KVEntry *> > dataElement(stageConfig);
                 for(int sdID=0; sdID<stageOutput[j].size(); sdID++) {
@@ -36,8 +43,10 @@ void RLMI::build() {
             }
         }
         this->stageDataList.push_back(subStageData);
-        this->stageModelList.push_back(stageModel);
+//        this->stageModelList.push_back(stageModel);
+        this->stageModelList[i] = stageModel;
         this->stageOutputList.push_back(stageOutput);
+        stageModelNum *= stageConfig;
     }
 //    printf("sd0: %lld\n", this->stageDataList[0].size());
 //    printf("sd1: %lld\n", this->stageDataList[1].size());
@@ -50,10 +59,11 @@ void RLMI::build() {
 int RLMI::rqLookup(unsigned int key) {
     RLMINode * nowModel = stageModelList[0][0];
     int baseIndex = 0;
-    for(int i=0; i<this->stageConfigList.size(); i++) {
+    for(int i=0; i<stageNum; i++) {
         int stageConfig = stageConfigList[i];
         double output = nowModel->predict(key);
-        output = std::max(std::min(output, 0.9999999), 0.0);
+        if(output < 0) output = 0;
+        if(output >= 1) output = 0.9999999;
         if(stageConfig != -1) {
             output *= stageConfig;
 //            printf("%d, %lld\n", baseIndex + int(output), this->stageModelList[i+1].size());
@@ -62,15 +72,26 @@ int RLMI::rqLookup(unsigned int key) {
         }
         else {
             int searchBasePos = int(output * nowModel->dataSize);
-            int start = std::max(0, searchBasePos - nowModel->maxOffset);
-            int end = std::min(nowModel->dataSize, searchBasePos + nowModel->maxOffset + 1);
-            for(int j=start; j<end; j++) {
-                for(Range & r : nowModel->trainData[j]->rangeList) {
-                    if(r.match(key)) {
-                        return r.id;
-                    }
-                }
+            int start = searchBasePos - nowModel->maxOffset;
+            int end = searchBasePos + nowModel->maxOffset + 1;
+            if(start < 0) start = 0;
+            if(end > nowModel->dataSize) end = nowModel->dataSize;
+//            int start = std::max(0, searchBasePos - nowModel->maxOffset);
+//            int end = std::min(nowModel->dataSize, searchBasePos + nowModel->maxOffset + 1);
+            if(nowModel->trainData[end-1]->rangeList[1]->match(key)) {
+                return nowModel->trainData[end-1]->rangeList[1]->id;
             }
+            for(int j=start; j<end; j++) {
+//                for(Range & r : nowModel->trainData[j]->rangeList) {
+//                    if(r.match(key)) {
+//                        return r.id;
+//                    }
+//                }
+                if(nowModel->trainData[j]->rangeList[0]->match(key)) return nowModel->trainData[j]->rangeList[0]->id;
+//                if(nowModel->trainData[j]->rangeList[1]->match(key)) return nowModel->trainData[j]->rangeList[1]->id;
+            }
+            printf("key: %u, start: %d, end: %d, startPos: %d, endPos: %d\n", key, start, end,
+                   nowModel->trainData[start]->rangeList[0]->Low, nowModel->trainData[end-1]->rangeList[1]->High);
         }
     }
     return -1;

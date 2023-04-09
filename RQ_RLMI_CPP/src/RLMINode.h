@@ -8,7 +8,7 @@ class RLMINode {
 public:
     double _a;
     double _b;
-    std::vector<KVEntry *> trainData;
+    KVEntry **trainData;
     int dataSize;
     std::vector<unsigned int> _keys;
     std::vector<double> _values;
@@ -18,7 +18,7 @@ public:
     double sig;
     int maxOffset;
 
-    RLMINode(std::vector<KVEntry *> trainData);
+    RLMINode(KVEntry **trainData, int _dataSize);
     std::vector<double> build();
     void calMuSig();
     double predict(unsigned int key);

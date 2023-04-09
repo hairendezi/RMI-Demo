@@ -1,16 +1,16 @@
 #include "RLMINode.h"
 #include <cmath>
 
-RLMINode::RLMINode(std::vector<KVEntry *> trainData) {
+RLMINode::RLMINode(KVEntry **trainData, int _dataSize) {
     this->_a = 0;
     this->_b = 0;
     this->trainData = trainData;
-    this->dataSize = trainData.size();
+    this->dataSize = _dataSize;
 
     if(this->dataSize != 0) {
-        for(auto d : this->trainData) {
-            _keys.push_back(d->key);
-            _values.push_back(d->value);
+        for(int i=0; i<this->dataSize; i++) {
+            _keys.push_back(this->trainData[i]->key);
+            _values.push_back(this->trainData[i]->value);
         }
 
         // ===== Normalize Keys in N(0, 1) =====
@@ -83,7 +83,9 @@ std::vector<double> RLMINode::build() {
     std::vector<double> output;
     for(int i=0; i<this->dataSize; i++) {
         double value_hat = this->_a * this->keys[i] + this->_b;
-        output.push_back(std::max(std::min(value_hat, 0.9999999), 0.0));
+        if(value_hat < 0) value_hat = 0;
+        if(value_hat >= 1) value_hat = 0.9999999;
+        output.push_back(value_hat);
     }
     return output;
 }
@@ -98,7 +100,8 @@ void RLMINode::evaluateErrorBound() {
     std::vector<double> errorList;
     for(int i=0; i<this->dataSize; i++) {
         double value_hat = this->_a * this->keys[i] + this->_b;
-        value_hat = std::max(std::min(value_hat, 0.9999999), 0.0);
+        if(value_hat < 0) value_hat = 0;
+        if(value_hat >= 1) value_hat = 0.9999999;
         double predictPos = value_hat * this->dataSize;
         errorList.push_back(fabs(i-predictPos));
     }
