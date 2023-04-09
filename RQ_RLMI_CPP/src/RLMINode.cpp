@@ -62,11 +62,9 @@ std::vector<double> RLMINode::build() {
             valueAver += this->values[i];
             sigmaKV += this->keys[i] * this->values[i];
             sigmaKK += this->keys[i] * this->keys[i];
-            // printf("ka: %f, va: %f, kv: %f, kk: %f\n", keysAver, valueAver, sigmaKV, sigmaKK);
         }
         keysAver /= this->dataSize;
         valueAver /= this->dataSize;
-//        printf("datasize: %d\n", this->dataSize);
 
         // Only one data
         if(this->dataSize * keysAver * keysAver == sigmaKK) {
@@ -79,7 +77,6 @@ std::vector<double> RLMINode::build() {
             this->_b = valueAver - this->_a * keysAver;
         }
     }
-//    printf("a: %f, b: %f\n", this->_a, this->_b);
     std::vector<double> output;
     for(int i=0; i<this->dataSize; i++) {
         double value_hat = this->_a * this->keys[i] + this->_b;
@@ -89,11 +86,6 @@ std::vector<double> RLMINode::build() {
     }
     return output;
 }
-
-//inline double RLMINode::predict(const unsigned int &key) {
-//    double _key = (1.0 * key - this->mu) / this->sig;
-//    return this->_a * _key + this->_b;
-//}
 
 void RLMINode::evaluateErrorBound() {
     if(this->dataSize == 0) return;

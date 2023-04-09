@@ -13,7 +13,6 @@ public:
     RLMINode ***stageModelList;
 
     std::vector<std::vector<std::vector<KVEntry *> > > stageDataList;
-//    std::vector<std::vector<RLMINode *> > stageModelList;
     std::vector<std::vector<std::vector<double> > > stageOutputList;
 
     RLMI(std::vector<KVEntry *> _trainData, int *_stageConfigList, int _stageNum);

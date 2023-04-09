@@ -14,9 +14,6 @@ std::vector<KVEntry *> readData(char *filepath) {
         if(fscanf(posFile, "%d\n", &pos) != 1) {break;}
         posList.push_back(pos);
     }
-//    for(int i : posList) {
-//        printf("%d\n", i);
-//    }
     std::vector<Range *> rangeList;
     for(int i=0; i<posList.size()-1; i++) {
         rangeList.push_back( new Range(posList[i], posList[i+1], i));
@@ -55,7 +52,6 @@ int main() {
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
     printf("Build Time Cost: %lld ms\n", duration);
     printf("===== Start Match =====\n");
-//    printf("Match result: %d", rlmi->rqLookup(10000));
     int noneMatchCount = 0;
     startTime = std::chrono::high_resolution_clock::now();
     for(int i=0; i<65536; i++) {
@@ -68,7 +64,6 @@ int main() {
     printf("Lookup Time Cost: %.6f ms\n", 1.0*duration/1e6);
     printf("None match count: %d\n", noneMatchCount);
     printf("===== Start Test Pext Test =====\n");
-//    printf("Match result: %d", rlmi->rqLookup(10000));
     startTime = std::chrono::high_resolution_clock::now();
     long long int temp = 0;
     for(long long int i=0; i<65536; i++) {
