@@ -45,8 +45,9 @@ int main() {
     std::vector<KVEntry *> trainData = readData("D:\\Desktop\\RMIDemo\\bugdata.txt");
     printf("===== Start Build RLMI =====\n");
     auto startTime = std::chrono::high_resolution_clock::now();
-    int *stageConfigList = new int[4]{4, 4, 4, -1};
-    RLMI *rlmi = new RLMI(trainData, stageConfigList, 4);
+//    int *stageConfigList = new int[4]{4, 4, 4, -1};
+    int *stageConfigList = new int[4]{4, -1};
+    RLMI *rlmi = new RLMI(trainData, stageConfigList, 2);
     rlmi->build();
     auto endTime = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
@@ -57,7 +58,7 @@ int main() {
 //    rlmi->rqLookup(2187654885);
 //    rlmi->rqLookup(2187654886);
 //    rlmi->rqLookup(2187654887);
-//    printf("%d\n", rlmi->rqLookup(2187654888));
+//    printf("%d\n", rlmi->rqLookup(1389458943));
 //    rlmi->rqLookup(2187654889);
 //    rlmi->rqLookup(2187654890);
 //    for(unsigned long long int i=2187654880;i<=2187654890;i++) {
@@ -74,6 +75,7 @@ int main() {
         }
         if(rlmi->rqLookup(i) == -1) {
             noneMatchCount ++;
+            printf("wrong index: %llu\n", i);
         }
     }
     printf("\n");

@@ -10,7 +10,7 @@ public:
     double _b;
     KVEntry **trainData;
     int dataSize;
-    std::vector<unsigned int> _keys;
+    std::vector<unsigned long long int> _keys;
     std::vector<double> _values;
     std::vector<double> keys;
     std::vector<double> values;

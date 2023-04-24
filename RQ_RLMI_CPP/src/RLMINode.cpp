@@ -19,6 +19,7 @@ RLMINode::RLMINode(KVEntry **trainData, int _dataSize) {
         this->calMuSig();
         if(this->sig == 0) this->sig = 1;
         for(unsigned long long int key : this->_keys) {
+//            printf("%.3f-%.3f = %.3f\n", 1.0*key, this->mu, key-this->mu);
             this->keys.push_back((1.0*key-this->mu) / this->sig);
         }
 

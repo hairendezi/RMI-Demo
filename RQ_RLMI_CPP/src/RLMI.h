@@ -26,7 +26,12 @@ public:
         double output;
         for(int i=0; i<stageNum; i++) {
             output = nowModel->predict(key);
-//            printf("a: %.3f, b: %.3f, output: %.3f, dataSize: %d\n", nowModel->_a, nowModel->_b, output, nowModel->dataSize);
+//            printf("a: %.3f, b: %.3f, output: %.3f, dataSize: %d, mu: %.3f, sig: %.3f\n",
+//                   nowModel->_a, nowModel->_b, output, nowModel->dataSize, nowModel->mu, nowModel->sig);
+//            for(int j=0; j<nowModel->dataSize; j++) {
+//                nowModel->trainData[j]->printSelf();
+//                printf("key: %.2f, value: %.2f\n", nowModel->keys[j], nowModel->values[j]);
+//            }
             if(output < 0) output = 0;
             if(output >= 1) output = 0.9999999;
             if(stageConfigList[i] != -1) {
