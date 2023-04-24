@@ -17,18 +17,19 @@ public:
 
     RLMI(std::vector<KVEntry *> _trainData, int *_stageConfigList, int _stageNum);
     void build();
-    inline int rqLookup(const unsigned int &key) const {
+
+    inline int rqLookup(const unsigned long long int &key) const {
         RLMINode * nowModel = stageModelList[0][0];
         int baseIndex = 0;
+        double output;
         for(int i=0; i<stageNum; i++) {
-            int stageConfig = stageConfigList[i];
-            double output = nowModel->predict(key);
+            output = nowModel->predict(key);
             if(output < 0) output = 0;
             if(output >= 1) output = 0.9999999;
-            if(stageConfig != -1) {
-                output *= stageConfig;
+            if(stageConfigList[i] != -1) {
+                output *= stageConfigList[i];
                 nowModel = this->stageModelList[i+1][baseIndex + int(output)];
-                baseIndex = (baseIndex + int(output)) * stageConfig;
+                baseIndex = (baseIndex + int(output)) * stageConfigList[i];
             }
             else {
                 int searchBasePos = int(output * nowModel->dataSize);

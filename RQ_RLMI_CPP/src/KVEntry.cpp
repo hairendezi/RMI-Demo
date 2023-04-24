@@ -1,6 +1,6 @@
 #include "KVEntry.h"
 
-KVEntry::KVEntry(unsigned int _key, double _value, Range **_rangeList) {
+KVEntry::KVEntry(unsigned long long int _key, double _value, Range **_rangeList) {
     this->key = _key;
     this->value = _value;
     this->rangeList = _rangeList;

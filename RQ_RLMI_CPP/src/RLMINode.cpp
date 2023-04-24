@@ -16,7 +16,7 @@ RLMINode::RLMINode(KVEntry **trainData, int _dataSize) {
         // ===== Normalize Keys in N(0, 1) =====
         this->calMuSig();
         if(this->sig == 0) this->sig = 1;
-        for(unsigned int key : this->_keys) {
+        for(unsigned long long int key : this->_keys) {
             this->keys.push_back((1.0*key-this->mu) / this->sig);
         }
 
@@ -37,13 +37,13 @@ RLMINode::RLMINode(KVEntry **trainData, int _dataSize) {
 void RLMINode::calMuSig() {
     // calculate mean
     double sum = 0;
-    for(unsigned int key : this->_keys) {
+    for(unsigned long long int key : this->_keys) {
         sum += key;
     }
     this->mu = sum / this->dataSize;
     // calculate the sigma
     double sigma2 = 0;
-    for(unsigned int key : this->_keys) {
+    for(unsigned long long int key : this->_keys) {
         sigma2 += (1.0 * key - this->mu) * (1.0 * key - this->mu);
     }
     this->sig = sqrt(sigma2);

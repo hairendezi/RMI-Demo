@@ -10,7 +10,7 @@ public:
     unsigned int key;
     double value;
     Range **rangeList;
-    KVEntry(unsigned int _key, double _value, Range **_rangeList);
+    KVEntry(unsigned long long int _key, double _value, Range **_rangeList);
     void printSelf();
 };
 

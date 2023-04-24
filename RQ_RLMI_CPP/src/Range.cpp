@@ -1,6 +1,6 @@
 #include "Range.h"
 
-Range::Range(unsigned int _Low, unsigned int _High, unsigned int _id) {
+Range::Range(unsigned long long int _Low, unsigned long long int _High, unsigned long long int _id) {
     this->Low = _Low;
     this->High = _High;
     this->id = _id;
