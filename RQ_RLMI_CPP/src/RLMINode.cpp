@@ -6,6 +6,8 @@ RLMINode::RLMINode(KVEntry **trainData, int _dataSize) {
     this->_b = 0;
     this->trainData = trainData;
     this->dataSize = _dataSize;
+    this->mu = 0;
+    this->sig = 1;
 
     if(this->dataSize != 0) {
         for(int i=0; i<this->dataSize; i++) {

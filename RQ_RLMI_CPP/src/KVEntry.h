@@ -7,7 +7,7 @@
 
 class KVEntry {
 public:
-    unsigned int key;
+    unsigned long long int key;
     double value;
     Range **rangeList;
     KVEntry(unsigned long long int _key, double _value, Range **_rangeList);

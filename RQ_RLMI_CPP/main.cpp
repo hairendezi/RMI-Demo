@@ -8,10 +8,10 @@
 std::vector<KVEntry *> readData(char *filepath) {
     printf("===== Read Data =====\n");
     FILE *posFile = fopen(filepath, "r");
-    int pos;
-    std::vector<int> posList;
+    unsigned long long int pos;
+    std::vector<unsigned long long int> posList;
     while(true) {
-        if(fscanf(posFile, "%d\n", &pos) != 1) {break;}
+        if(fscanf(posFile, "%llu\n", &pos) != 1) {break;}
         posList.push_back(pos);
     }
     std::vector<Range *> rangeList;
@@ -45,7 +45,7 @@ int main() {
     std::vector<KVEntry *> trainData = readData("D:\\Desktop\\RMIDemo\\bugdata.txt");
     printf("===== Start Build RLMI =====\n");
     auto startTime = std::chrono::high_resolution_clock::now();
-    int stageConfigList[4] = {4, 4, 4, -1};
+    int *stageConfigList = new int[4]{4, 4, 4, -1};
     RLMI *rlmi = new RLMI(trainData, stageConfigList, 4);
     rlmi->build();
     auto endTime = std::chrono::high_resolution_clock::now();
@@ -57,7 +57,7 @@ int main() {
 //    rlmi->rqLookup(2187654885);
 //    rlmi->rqLookup(2187654886);
 //    rlmi->rqLookup(2187654887);
-    rlmi->rqLookup(2187654888);
+//    printf("%d\n", rlmi->rqLookup(2187654888));
 //    rlmi->rqLookup(2187654889);
 //    rlmi->rqLookup(2187654890);
 //    for(unsigned long long int i=2187654880;i<=2187654890;i++) {
@@ -68,15 +68,15 @@ int main() {
 //            noneMatchCount ++;
 //        }
 //    }
-//    for(unsigned long long int i=0; i<4294967296; i++) {
-//        if(i%10000000 == 0) {
-//            printf("%llu\n", i);
-//        }
-//        if(rlmi->rqLookup(i) == -1) {
-//            noneMatchCount ++;
-//        }
-//    }
-//    printf("\n");
+    for(unsigned long long int i=0; i<4294967296; i++) {
+        if(i%10000000 == 0) {
+            printf("%llu\n", i);
+        }
+        if(rlmi->rqLookup(i) == -1) {
+            noneMatchCount ++;
+        }
+    }
+    printf("\n");
     endTime = std::chrono::high_resolution_clock::now();
     duration = std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime).count();
     printf("Lookup Time Cost: %.6f ms\n", 1.0*duration/1e6);

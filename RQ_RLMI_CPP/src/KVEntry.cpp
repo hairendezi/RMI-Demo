@@ -7,7 +7,7 @@ KVEntry::KVEntry(unsigned long long int _key, double _value, Range **_rangeList)
 }
 
 void KVEntry::printSelf() {
-    printf("key: %d, value: %.10f", key, value);
+    printf("key: %llu, value: %.10f", key, value);
     rangeList[0]->printSelf();
     printf(", ");
     if(rangeList[1]) rangeList[1]->printSelf();

@@ -7,7 +7,7 @@ Range::Range(unsigned long long int _Low, unsigned long long int _High, unsigned
 }
 
 void Range::printSelf() {
-    printf("Range %d: [%d, %d)", id, Low, High+1);
+    printf("Range %llu: [%llu, %llu)", id, Low, High+1);
 }
 
 //bool Range::match(unsigned int pos) {

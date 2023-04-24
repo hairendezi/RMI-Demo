@@ -118,7 +118,8 @@ if __name__ == '__main__':
         {"submodel_num": 4},
         {"submodel_num": "leaf"}
     ]
-    trainData = generateRandomData(1500)
+    trainData = bugTest()
+    # trainData = generateRandomData(1500)
     rlmi = RLMI(trainData, stageConfigList)
     rlmi.build()
     rlmi.visualStageOutput()

@@ -46,11 +46,26 @@ def generateRangeQueryData(posNum, dataRange):
         }
     for id, rangeData in enumerate(rangeDataSet)], randomPosList
 
+def bugTest():
+    posList = [0, 1056964608, 2684354560, 4009754624, 4294967296]
+    rangeDataSet = []
+    for i in range(len(posList) - 1):
+        rangeDataSet.append([posList[i], posList[i + 1]])
+
+    return [
+        {
+            "LOW": rangeData[0],
+            "HIGH": rangeData[1] - 1,
+            "ID": id
+        }
+        for id, rangeData in enumerate(rangeDataSet)], posList
+
 
 if __name__ == '__main__':
     # print(generateRandomData(1500))
     # print(generateRangeQueryData(1000))
-    rangeData, posList = generateRangeQueryData(1000, [0, 65535])
-    with open("./posdata.txt", "w") as f:
-        for i in posList:
-            f.write(str(i)+"\n")
+    # rangeData, posList = generateRangeQueryData(1000, [0, 65535])
+    # with open("./posdata.txt", "w") as f:
+    #     for i in posList:
+    #         f.write(str(i)+"\n")
+    print(bugTest())

@@ -5,9 +5,9 @@
 
 class Range {
 public:
-    unsigned int Low;
-    unsigned int High;
-    unsigned int id;
+    unsigned long long int Low;
+    unsigned long long int High;
+    unsigned long long int id;
 
 
     Range(unsigned long long int _Low, unsigned long long int _High, unsigned long long int _id);

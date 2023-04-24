@@ -24,6 +24,7 @@ void RLMI::build() {
             RLMINode * rlmiNode = new RLMINode(tempModelData, modelData.size());
             stageOutput.push_back(rlmiNode->build());
             stageModel[j] = rlmiNode;
+            rlmiNode->evaluateErrorBound();
             if(stageConfig != -1) {
                 std::vector<std::vector<KVEntry *> > dataElement(stageConfig);
                 for(int sdID=0; sdID<stageOutput[j].size(); sdID++) {
@@ -35,9 +36,9 @@ void RLMI::build() {
                 }
             }
             // Leaf Node, Need to evaluate the error bound
-            else {
-                rlmiNode->evaluateErrorBound();
-            }
+//            else {
+//                rlmiNode->evaluateErrorBound();
+//            }
         }
         this->stageDataList.push_back(subStageData);
         this->stageModelList[i] = stageModel;

@@ -48,7 +48,8 @@ class RangeQueryHandler:
                     return j.ID
 
 if __name__ == '__main__':
-    rangeData, posList = generateRangeQueryData(1000, [0, 65535])
+    # rangeData, posList = generateRangeQueryData(1000, [0, 65535])
+    rangeData, posList = bugTest()
     rqHandler = RangeQueryHandler(rangeData, posList)
     noneMatchDataCount = 0
     startTime = datetime.datetime.now()
