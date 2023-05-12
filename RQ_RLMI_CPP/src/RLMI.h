@@ -30,16 +30,18 @@ public:
 //                   nowModel->_a, nowModel->_b, output, nowModel->dataSize, nowModel->mu, nowModel->sig);
 //            for(int j=0; j<nowModel->dataSize; j++) {
 //                nowModel->trainData[j]->printSelf();
-//                printf("key: %.2f, value: %.2f\n", nowModel->keys[j], nowModel->values[j]);
+////                printf("key: %.2f, value: %.2f\n", nowModel->keys[j], nowModel->values[j]);
 //            }
+//            printf("\n");
             if(output < 0) output = 0;
             if(output >= 1) output = 0.9999999;
             if(stageConfigList[i] != -1) {
 //                output *= stageConfigList[i];
+//                printf("next model index: %d\n", baseIndex + int(output*stageConfigList[i]));
                 tempModel = this->stageModelList[i+1][baseIndex + int(output*stageConfigList[i])];
                 if(tempModel->dataSize != 0) {
                     nowModel = tempModel;
-                    baseIndex = (baseIndex + int(output)) * stageConfigList[i];
+                    baseIndex = (baseIndex + int(output*stageConfigList[i])) * stageConfigList[i];
                     continue;
                 }
             }
