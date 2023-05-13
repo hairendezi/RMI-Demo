@@ -22,8 +22,8 @@ public:
     std::vector<double> build();
     void calMuSig();
     inline double predict(const unsigned long long int &key) const {
-        double _key = (1.0 * key - this->mu) / this->sig;
-        return this->_a * _key + this->_b;
+//        double _key = (1.0 * key - this->mu) * this->sig;
+        return this->_a * (1.0 * key - this->mu) * this->sig + this->_b;
     }
     void evaluateErrorBound();
 };

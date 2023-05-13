@@ -20,7 +20,7 @@ RLMINode::RLMINode(KVEntry **trainData, int _dataSize) {
         if(this->sig == 0) this->sig = 1;
         for(unsigned long long int key : this->_keys) {
 //            printf("%.3f-%.3f = %.3f\n", 1.0*key, this->mu, key-this->mu);
-            this->keys.push_back((1.0*key-this->mu) / this->sig);
+            this->keys.push_back((1.0*key-this->mu) * this->sig);
         }
 
         // ===== Normalize Values in [0, 1] =====
@@ -49,7 +49,7 @@ void RLMINode::calMuSig() {
     for(unsigned long long int key : this->_keys) {
         sigma2 += (1.0 * key - this->mu) * (1.0 * key - this->mu);
     }
-    this->sig = sqrt(sigma2);
+    this->sig = 1 / sqrt(sigma2);
 }
 
 std::vector<double> RLMINode::build() {

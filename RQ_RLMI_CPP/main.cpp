@@ -46,21 +46,38 @@ int main() {
     printf("===== Start Build RLMI =====\n");
     auto startTime = std::chrono::high_resolution_clock::now();
 //    int *stageConfigList = new int[4]{4, 4, 4, -1};
-    int *stageConfigList = new int[4]{4, 4, -1};
-    RLMI *rlmi = new RLMI(trainData, stageConfigList, 3);
+    int *stageConfigList = new int[4]{4, 4, 6, -1};
+    RLMI *rlmi = new RLMI(trainData, stageConfigList, 4);
     rlmi->build();
     auto endTime = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
     printf("Build Time Cost: %lld ms\n", duration);
+    printf("Model MAX Offset\n");
+    int nodeNum = 1;
+    for(int i=0; i<4; i++) {
+        printf("Layer %d: ", i+1);
+        for(int j=0; j<nodeNum; j++) {
+            printf("%d ", rlmi->stageModelList[i][j]->maxOffset);
+        }
+        printf("\n");
+//        if(i == 3) {
+//            for(int j=0; j<96; j++) {
+//                printf("model index: %d\n", j);
+//                for(int k=0; k<rlmi->stageModelList[i][j]->dataSize; k++) {
+//                    rlmi->stageModelList[i][j]->trainData[k]->printSelf();
+//                }
+//                printf("===========\n");
+//            }
+//        }
+        nodeNum *= stageConfigList[i];
+    }
+
+
     printf("===== Start Match =====\n");
     int noneMatchCount = 0;
     startTime = std::chrono::high_resolution_clock::now();
-//    rlmi->rqLookup(2187654885);
-//    rlmi->rqLookup(2187654886);
-//    rlmi->rqLookup(2187654887);
-//    printf("%d\n", rlmi->rqLookup(4294967295));
-//    rlmi->rqLookup(2187654889);
-//    rlmi->rqLookup(2187654890);
+
+//    rlmi->rqLookup(10000);
 //    for(unsigned long long int i=2187654880;i<=2187654890;i++) {
 //        if(i%1 == 0) {
 //            printf("%llu\n", i);
@@ -69,21 +86,20 @@ int main() {
 //            noneMatchCount ++;
 //        }
 //    }
-    for(unsigned long long int i=0; i<65536; i++) {
-//        if(i%10000000 == 0) {
-//            printf("%llu\n", i);
-//        }
-        if(rlmi->rqLookup(i) == -1) {
-            noneMatchCount ++;
-            printf("wrong index: %llu\n", i);
+    for(int N=0; N<100; N++) {
+        for(unsigned long long int i=0; i<65536; i++) {
+            if(rlmi->rqLookup(i) == -1) {
+                noneMatchCount ++;
+                printf("wrong index: %llu\n", i);
+            }
         }
     }
     printf("\n");
     endTime = std::chrono::high_resolution_clock::now();
     duration = std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime).count();
-    printf("Lookup Time Cost: %.6f ms\n", 1.0*duration/1e6);
+    printf("Lookup Time Cost: %.6f ms\n", 0.01*duration/1e6);
     printf("None match count: %d\n", noneMatchCount);
-    printf("===== Start Test Pext Test =====\n");
+//    printf("===== Start Test Pext Test =====\n");
 //    startTime = std::chrono::high_resolution_clock::now();
 //    long long int temp = 0;
 //    for(long long int i=0; i<65536; i++) {

@@ -8,6 +8,7 @@ RLMI::RLMI(std::vector<KVEntry *> _trainData, int *_stageConfigList, int _stageN
 }
 
 void RLMI::build() {
+    // init root data
     stageDataList = {{this->trainData}};
     int stageModelNum = 1;
     for(int i=0; i<this->stageNum; i++) {

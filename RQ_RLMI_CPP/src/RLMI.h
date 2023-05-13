@@ -32,16 +32,17 @@ public:
 //                nowModel->trainData[j]->printSelf();
 ////                printf("key: %.2f, value: %.2f\n", nowModel->keys[j], nowModel->values[j]);
 //            }
-//            printf("\n");
             if(output < 0) output = 0;
             if(output >= 1) output = 0.9999999;
             if(stageConfigList[i] != -1) {
 //                output *= stageConfigList[i];
-//                printf("next model index: %d\n", baseIndex + int(output*stageConfigList[i]));
+//                printf("next model index: %d+%d=%d\n\n", baseIndex, int(output*stageConfigList[i]), baseIndex + int(output*stageConfigList[i]));
                 tempModel = this->stageModelList[i+1][baseIndex + int(output*stageConfigList[i])];
                 if(tempModel->dataSize != 0) {
                     nowModel = tempModel;
-                    baseIndex = (baseIndex + int(output*stageConfigList[i])) * stageConfigList[i];
+//                    printf("(baseIndex + pos) * son: (%d + %d) * %d = %d\n", baseIndex, int(output*stageConfigList[i]),
+//                           stageConfigList[i], baseIndex + int(output*stageConfigList[i]) * stageConfigList[i]);
+                    baseIndex = (baseIndex + int(output*stageConfigList[i])) * stageConfigList[i+1];
                     continue;
                 }
             }
@@ -61,24 +62,6 @@ public:
             for(int j=start; j<end; j++) {
                 if(nowModel->trainData[j]->rangeList[0]->match(key)) return nowModel->trainData[j]->rangeList[0]->id;
             }
-//            if(stageConfigList[i] != -1) {
-//                output *= stageConfigList[i];
-//                nowModel = this->stageModelList[i+1][baseIndex + int(output)];
-//                baseIndex = (baseIndex + int(output)) * stageConfigList[i];
-//            }
-//            else {
-//                int searchBasePos = int(output * nowModel->dataSize);
-//                int start = searchBasePos - nowModel->maxOffset;
-//                int end = searchBasePos + nowModel->maxOffset + 1;
-//                if(start < 0) start = 0;
-//                if(end > nowModel->dataSize) end = nowModel->dataSize;
-//                if(nowModel->trainData[end-1]->rangeList[1]->match(key)) {
-//                    return nowModel->trainData[end-1]->rangeList[1]->id;
-//                }
-//                for(int j=start; j<end; j++) {
-//                    if(nowModel->trainData[j]->rangeList[0]->match(key)) return nowModel->trainData[j]->rangeList[0]->id;
-//                }
-//            }
         }
         return -1;
     }
