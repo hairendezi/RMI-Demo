@@ -21,18 +21,20 @@ void RLMI::build() {
             std::vector<KVEntry *> modelData = stageData[j];
             KVEntry **tempModelData = new KVEntry*[modelData.size()];
             for(int k=0; k<modelData.size(); k++) {tempModelData[k] = modelData[k];}
-
             RLMINode * rlmiNode = new RLMINode(tempModelData, modelData.size());
             stageOutput.push_back(rlmiNode->build());
             stageModel[j] = rlmiNode;
             rlmiNode->evaluateErrorBound();
+//            rlmiNode->printSelf();
             if(stageConfig != -1) {
                 std::vector<std::vector<KVEntry *> > dataElement(stageConfig);
                 for(int sdID=0; sdID<stageOutput[j].size(); sdID++) {
+//                    printf("output: %.3f, stageconfig: %d\n", stageOutput[j][sdID], stageConfig);
                     double predictIndex = stageOutput[j][sdID] * stageConfig;
+//                    printf("stage output id: %d, subindex: %d\n", sdID, int(predictIndex));
                     dataElement[int(predictIndex)].push_back(stageData[j][sdID]);
                 }
-                for(std::vector<KVEntry *> el : dataElement) {
+                for(const std::vector<KVEntry *>& el : dataElement) {
                     subStageData.push_back(el);
                 }
             }
@@ -41,9 +43,11 @@ void RLMI::build() {
 //                rlmiNode->evaluateErrorBound();
 //            }
         }
+
         this->stageDataList.push_back(subStageData);
         this->stageModelList[i] = stageModel;
         this->stageOutputList.push_back(stageOutput);
         stageModelNum *= stageConfig;
+        printf("stage model num: %d\n", stageModelNum);
     }
 }

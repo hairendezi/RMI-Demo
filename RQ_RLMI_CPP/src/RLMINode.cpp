@@ -49,7 +49,7 @@ void RLMINode::calMuSig() {
     for(unsigned long long int key : this->_keys) {
         sigma2 += (1.0 * key - this->mu) * (1.0 * key - this->mu);
     }
-    this->sig = 1 / sqrt(sigma2);
+    this->sig = sigma2 == 0? 0 : 1 / sqrt(sigma2);
 }
 
 std::vector<double> RLMINode::build() {

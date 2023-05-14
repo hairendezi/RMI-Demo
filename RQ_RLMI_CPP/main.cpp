@@ -42,12 +42,12 @@ std::vector<KVEntry *> readData(char *filepath) {
 }
 
 int main() {
-    std::vector<KVEntry *> trainData = readData("D:\\Desktop\\RMIDemo\\random.txt");
+    std::vector<KVEntry *> trainData = readData("D:\\Desktop\\RMIDemo\\random20.txt");
     printf("===== Start Build RLMI =====\n");
     auto startTime = std::chrono::high_resolution_clock::now();
 //    int *stageConfigList = new int[4]{4, 4, 4, -1};
-    int *stageConfigList = new int[4]{4, 4, 6, -1};
-    RLMI *rlmi = new RLMI(trainData, stageConfigList, 4);
+    int *stageConfigList = new int[4]{4, 4, -1};
+    RLMI *rlmi = new RLMI(trainData, stageConfigList, 3);
     rlmi->build();
     auto endTime = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();

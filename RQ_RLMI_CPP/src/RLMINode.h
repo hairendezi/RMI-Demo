@@ -16,7 +16,7 @@ public:
     std::vector<double> values;
     double mu;
     double sig;
-    int maxOffset;
+    int maxOffset = -1;
 
     RLMINode(KVEntry **trainData, int _dataSize);
     std::vector<double> build();
@@ -26,6 +26,9 @@ public:
         return this->_a * (1.0 * key - this->mu) * this->sig + this->_b;
     }
     void evaluateErrorBound();
+    inline void printSelf() {
+        printf("dataSize: %d, mu: %.3f, sig: %.3f, a: %.3f, b: %.3f\n", dataSize, mu, sig, _a, _b);
+    }
 };
 
 
