@@ -51,3 +51,17 @@ void RLMI::build() {
         printf("stage model num: %d\n", stageModelNum);
     }
 }
+
+int RLMI::evaluateMemory() const {
+    int stageModelNum = 1;
+    int memoryConsumption = 0;
+    for(int i=0; i<this->stageNum; i++) {
+        for(int j=0; j<stageModelNum; j++) {
+            if(this->stageModelList[i][j]->dataSize != 0) {
+                memoryConsumption += 4*4;
+            }
+        }
+        stageModelNum *= this->stageConfigList[i];
+    }
+    return memoryConsumption;
+}

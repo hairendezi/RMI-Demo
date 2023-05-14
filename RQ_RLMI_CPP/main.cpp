@@ -71,7 +71,7 @@ int main() {
 //        }
         nodeNum *= stageConfigList[i];
     }
-
+    printf("Memory Consumption: %d byte\n", rlmi->evaluateMemory());
 
     printf("===== Start Match =====\n");
     int noneMatchCount = 0;

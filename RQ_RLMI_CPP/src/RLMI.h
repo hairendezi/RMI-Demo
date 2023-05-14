@@ -17,6 +17,7 @@ public:
 
     RLMI(std::vector<KVEntry *> _trainData, int *_stageConfigList, int _stageNum);
     void build();
+    int evaluateMemory() const;
 
     inline int rqLookup(const unsigned long long int &key) const {
 //        printf("lookup key: %llu\n", key);
