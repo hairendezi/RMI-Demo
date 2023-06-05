@@ -48,7 +48,6 @@ void RLMI::build() {
         this->stageModelList[i] = stageModel;
         this->stageOutputList.push_back(stageOutput);
         stageModelNum *= stageConfig;
-        printf("stage model num: %d\n", stageModelNum);
     }
 }
 
