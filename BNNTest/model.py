@@ -3,6 +3,8 @@ from functions import binarize
 import math
 import torch.nn.functional as F
 
+
+# 二值化激活函数，论文里面提到的clip
 class BinaryTanh(nn.Module):
     def __init__(self):
         super(BinaryTanh, self).__init__()
